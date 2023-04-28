@@ -1258,22 +1258,67 @@ KeyAlt:
     Alt_presses = 0
 return
 
-GetSelection(timeoutSeconds:= 0.3)
-{
+GetSelection(timeoutSeconds:= 0.3) {
 	Clipboard:= ""  ; Clear clipboard for ClipWait to function.
 	Send ^c  ; Send Ctrl+C to get selection on clipboard.
 	ClipWait %timeoutSeconds% ; Wait for the copied text to arrive at the clipboard.
     return Clipboard
 }
 ;=========================================================================
-
-; 任务栏滚轮调节音量
+; 当鼠标位于任务栏：
+;   1.滚轮调节音量
+;   2. x1键切换最近的应用
 #If MouseIsOver("ahk_class Shell_TrayWnd")
-WheelUp::Send {Volume_Up}
-WheelDown::Send {Volume_Down}
+    WheelUp::Send {Volume_Up}
+    WheelDown::Send {Volume_Down}
+    XButton1:: AltTab()
+return
+#If
+
 MouseIsOver(WinTitle) {
     MouseGetPos,,, Win
     return WinExist(WinTitle . " ahk_id " . Win)
 }
-#If
+
+AltTab() {
+    list := ""
+    WinGet, id, list
+    Loop, %id%
+    {
+        this_ID := id%A_Index%
+        IfWinActive, ahk_id %this_ID%
+            continue    
+        WinGetTitle, title, ahk_id %this_ID%
+        If (title = "")
+            continue
+        If (!IsWindow(WinExist("ahk_id" . this_ID))) 
+            continue
+        WinActivate, ahk_id %this_ID%
+        WinWaitActive, ahk_id %this_ID%,,2 
+            break
+    }
+}
+
+; Check whether the target window is activation target
+IsWindow(hWnd) {
+    WinGet, dwStyle, Style, ahk_id %hWnd%
+    if ((dwStyle&0x08000000) || !(dwStyle&0x10000000)) {
+        return false
+    }
+    WinGet, dwExStyle, ExStyle, ahk_id %hWnd%
+    if (dwExStyle & 0x00000080) {
+        return false
+    }
+    WinGetClass, szClass, ahk_id %hWnd%
+    if (szClass = "TApplication") {
+        return false
+    }
+    return true
+}
+
 ;=========================================================================
+; 双击 Fn 
+sc163:: 
+    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<250)
+        MsgBox, "双击 Fn"
+    return
