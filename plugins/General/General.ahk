@@ -1214,6 +1214,21 @@ return
 ; +BackSpace:: Send {esc}
 
 ;=========================================================================
+; 双击 Fn, 唤醒 everything
+sc163:: 
+    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<250)
+    {
+        selection := GetSelection()
+        Send, !s
+        if (selection)
+        {
+            Sleep, 50
+            Send, ^V
+        }
+    }
+return
+
+;=========================================================================
 ; 单击alt保持原状,双击alt调出copytranslator
 $Alt::
     if Alt_presses > 0
@@ -1272,8 +1287,6 @@ GetSelection(timeoutSeconds:= 0.3) {
     WheelUp::Send {Volume_Up}
     WheelDown::Send {Volume_Down}
     XButton1:: AltTab()
-return
-#If
 
 MouseIsOver(WinTitle) {
     MouseGetPos,,, Win
@@ -1315,10 +1328,3 @@ IsWindow(hWnd) {
     }
     return true
 }
-
-;=========================================================================
-; 双击 Fn 
-sc163:: 
-    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<250)
-        MsgBox, "双击 Fn"
-    return
