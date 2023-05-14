@@ -1166,6 +1166,12 @@ return
 <DeleteLine>:
     Send {End}{Shift Down}{Home}{Shift Up}{BackSpace}
 return
+<DeleteLeft>:
+    Send +{Home}{BackSpace}
+Return
+<ExpandSelection>:
+    Send {Ctrl Down}{Right}{Shift Down}{Left}{Shift Up}{Ctrl Up}
+Return
 ; 按单词跳跃
 <PreWord>:
     Send, ^{Left} 
@@ -1211,22 +1217,38 @@ return
 !+left::Send +{home}
 !+right::Send +{end}
 
+^Enter:: Send {end}{Enter}
+^+Enter:: Send {home}{Enter}{Up}
+
 ; +BackSpace:: Send {esc}
 
 ;=========================================================================
-; 双击 Fn, 唤醒 everything
+; 双击 fn
 sc163:: 
-    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<250)
+    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<300)
     {
-        selection := GetSelection()
-        Send, !s
-        if (selection)
-        {
-            Sleep, 50
-            Send, ^V
-        }
+        MsgBox, dclick fn
     }
 return
+;=========================================================================
+; 双击 shift, 扩选光标所在的文本
+shift:: 
+    if (A_PriorHotKey="shift" and A_TimeSincePriorHotkey<400)
+    {
+        Send {Ctrl Down}{Right}{Shift Down}{Left}{Shift Up}{Ctrl Up}
+    }
+return
+;=========================================================================
+; 唤醒 everything
+!s::
+    selection := GetSelection()
+    Send, !f
+    if (selection)
+        {
+            Sleep, 150
+            Send, ^V
+        }
+    return
 
 ;=========================================================================
 ; 单击alt保持原状,双击alt调出copytranslator
@@ -1279,6 +1301,7 @@ GetSelection(timeoutSeconds:= 0.3) {
 	ClipWait %timeoutSeconds% ; Wait for the copied text to arrive at the clipboard.
     return Clipboard
 }
+
 ;=========================================================================
 ; 当鼠标位于任务栏：
 ;   1.滚轮调节音量
