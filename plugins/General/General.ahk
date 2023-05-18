@@ -1122,7 +1122,7 @@ return
 return
 
 
-;----------------------------------------------
+;=========================================================================
 ; obgnail use
 <ChangeTypewriting>:
     GetKeyState, CapsLockState, CapsLock, T
@@ -1169,9 +1169,6 @@ return
 <DeleteLeft>:
     Send +{Home}{BackSpace}
 Return
-<ExpandSelection>:
-    Send {Ctrl Down}{Right}{Shift Down}{Left}{Shift Up}{Ctrl Up}
-Return
 ; 按单词跳跃
 <PreWord>:
     Send, ^{Left} 
@@ -1196,14 +1193,11 @@ return
 <RemoveTitle>:
     biaotyic+=1
     MouseGetPos , , , btwid ,  ; 得到鼠标所在位置窗口的id及控件名称
-    if biaotyic>0
-    {
-    WinSet, Style, -0xC00000,ahk_id %btwid%; 移除活动窗口的标题栏 (WS_CAPTION).
-    biaotyic*=-1
-    }
-    else
-    {
-    WinSet, Style, +0xC00000,ahk_id %btwid%; 恢复活动窗口的标题栏 (WS_CAPTION).
+    if (biaotyic>0) {
+        WinSet, Style, -0xC00000,ahk_id %btwid%; 移除活动窗口的标题栏 (WS_CAPTION).
+        biaotyic*=-1
+    } else {
+        WinSet, Style, +0xC00000,ahk_id %btwid%; 恢复活动窗口的标题栏 (WS_CAPTION).
     }
 return
 
@@ -1223,18 +1217,17 @@ return
 ; +BackSpace:: Send {esc}
 
 ;=========================================================================
-; 双击 fn
+; 双击 fn 启动 vim 热键
 sc163:: 
-    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<300)
-    {
-        MsgBox, dclick fn
+    if (A_PriorHotKey="sc163" and A_TimeSincePriorHotkey<300) {
+        ; MsgBox, 启动Vim热键
+        Gen_Toggle()
     }
 return
 ;=========================================================================
 ; 双击 shift, 扩选光标所在的文本
 shift:: 
-    if (A_PriorHotKey="shift" and A_TimeSincePriorHotkey<400)
-    {
+    if (A_PriorHotKey="shift" and A_TimeSincePriorHotkey<400) {
         Send {Ctrl Down}{Right}{Shift Down}{Left}{Shift Up}{Ctrl Up}
     }
 return
@@ -1243,22 +1236,17 @@ return
 !s::
     selection := GetSelection()
     Send, !f
-    if (selection)
-        {
-            Sleep, 150
-            Send, ^V
-        }
+    if (selection) {
+        Sleep, 150
+        Send, ^V
+    }
     return
-
 ;=========================================================================
 ; 单击alt保持原状,双击alt调出copytranslator
 $Alt::
-    if Alt_presses > 0
-    {
+    if (Alt_presses > 0) {
         Alt_presses += 1
-    }
-    else
-    {
+    } else {
         ; 否则，这是新一系列按键的首次按键。将计数设为 1 并启动定时器：
         Alt_presses = 1
         SetTimer, KeyAlt, 300 ; 在 300 毫秒内等待更多的按键。
@@ -1268,26 +1256,20 @@ return
 KeyAlt:
     SetTimer, KeyAlt, off
 
-    if Alt_presses = 1
-    {
+    if (Alt_presses = 1) {
         send {alt}
     }
-    else if Alt_presses = 2
-    {
+    else if (Alt_presses = 2) {
         selection := GetSelection()
-        if (selection)
-        {
+        if (selection) {
             Send ^c
             Send ^c
-        }
-        Else
-        {
+        } Else {
             WinShow ahk_exe copytranslator.exe
             WinActivate ahk_exe copytranslator.exe
         }
     }
-    ; else if Alt_presses > 2
-    ; {
+    ; else (if Alt_presses > 2) {
     ;     MsgBox, 检测到三次或更多次点击
     ; }
 
@@ -1309,14 +1291,14 @@ GetSelection(timeoutSeconds:= 0.3) {
 #If MouseIsOver("ahk_class Shell_TrayWnd")
     WheelUp::Send {Volume_Up}
     WheelDown::Send {Volume_Down}
-    XButton1:: AltTab()
+    XButton1:: RecentTask()
 
 MouseIsOver(WinTitle) {
     MouseGetPos,,, Win
     return WinExist(WinTitle . " ahk_id " . Win)
 }
 
-AltTab() {
+RecentTask() {
     list := ""
     WinGet, id, list
     Loop, %id%
@@ -1351,3 +1333,4 @@ IsWindow(hWnd) {
     }
     return true
 }
+;=========================================================================
