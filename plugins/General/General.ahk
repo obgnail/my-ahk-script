@@ -1201,6 +1201,10 @@ return
     }
 return
 
+; 切换标签
+!e:: Send ^{Tab}
+!+e:: Send ^+{Tab}
+
 !+h::Send +{Left}
 !+l::Send +{Right}
 !+j::Send +{Down}
@@ -1208,9 +1212,11 @@ return
 !+n::Send +{home}
 !+m::Send +{end}
 
+; 选择到行首、行尾
 !+left::Send +{home}
 !+right::Send +{end}
 
+; 直接下一行
 ^Enter:: Send {end}{Enter}
 ^+Enter:: Send {home}{Enter}{Up}
 

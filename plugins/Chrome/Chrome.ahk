@@ -1,8 +1,8 @@
 Chrome:
     vim.SetWin("Chrome", "", "Chrome.exe")
     vim.SetMode("normal", "Chrome")
-    vim.Map("<la-n>", "<Chrome_Prev_Tab>", "Chrome")
-    vim.Map("<la-m>", "<Chrome_Next_Tab>", "Chrome")
+    vim.Map("<la-->", "<Chrome_Prev_Tab>", "Chrome")
+    vim.Map("<la-=>", "<Chrome_Next_Tab>", "Chrome")
     ; vim.Map("<la-3>", "<Chrome_Select3>", "Chrome")
     ; vim.Map("<la-4>", "<Chrome_Select4>", "Chrome")
     ; vim.Map("<la-5>", "<Chrome_Select5>", "Chrome")
