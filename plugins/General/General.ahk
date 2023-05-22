@@ -1214,6 +1214,13 @@ return
 ^Enter:: Send {end}{Enter}
 ^+Enter:: Send {home}{Enter}{Up}
 
+sc163 & +::
+sc163 & WheelUp:: Send {Volume_Up}
+
+sc163 & -::
+sc163 & WheelDown:: Send {Volume_Down}
+
+
 ; +BackSpace:: Send {esc}
 
 ;=========================================================================
